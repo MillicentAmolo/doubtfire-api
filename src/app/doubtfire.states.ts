@@ -8,6 +8,8 @@ import {TeachingPeriodListComponent} from './admin/states/teaching-periods/teach
 import {AcceptEulaComponent} from './eula/accept-eula/accept-eula.component';
 import {FUsersComponent} from './admin/states/f-users/f-users.component';
 import {FUnitsComponent} from './admin/states/f-units/f-units.component';
+import {ForgotPasswordComponent} from './sessions/states/forgot-password/forgot-password.component';
+import {ResetPasswordComponent} from './sessions/states/reset-password/reset-password.component';
 
 /*
  * Use this file to store any states that are sourced by angular components.
@@ -185,6 +187,32 @@ const SignInState: NgHybridStateDeclaration = {
   },
 };
 
+const ForgotPasswordState: NgHybridStateDeclaration = {
+  name: 'forgot_password',
+  url: '/forgot_password',
+  views: {
+    main: {
+      component: ForgotPasswordComponent,
+    },
+  },
+  data: {
+    pageTitle: 'Forgot Password',
+  },
+};
+
+const ResetPasswordState: NgHybridStateDeclaration = {
+  name: 'reset_password',
+  url: '/reset_password?token',
+  views: {
+    main: {
+      component: ResetPasswordComponent,
+    },
+  },
+  data: {
+    pageTitle: 'Reset Password',
+  },
+};
+
 /**
  * Define the Edit Profile state.
  */
@@ -306,4 +334,6 @@ export const doubtfireStates = [
   ViewAllProjectsState,
   ViewAllUnits,
   AdministerUnits,
+  ForgotPasswordState,
+  ResetPasswordState,
 ];

@@ -185,6 +185,19 @@ export class AuthenticationService {
     }
   }
 
+  public requestPasswordReset(payload: { email?: string; username?: string }): Observable<any> {
+    return this.httpClient.post(`${this.AUTH_URL}/password/forgot`, payload);
+  }
+
+  public resetPassword(payload: { reset_password_token: string; password: string; password_confirmation?: string }): Observable<any> {
+    return this.httpClient.post(`${this.AUTH_URL}/password/reset`, payload);
+  }
+
+  public changePassword(payload: { current_password: string; new_password: string }): Observable<any> {
+    // Headers are injected by HttpAuthenticationInterceptor
+    return this.httpClient.post(`${this.AUTH_URL}/password/change`, payload);
+  }
+
   public timeoutAuthentication(): void {
     if (this.uiRouterGlobals.current.name !== 'timeout') {
       this.alertService.error('Authentication timed out', 6000);

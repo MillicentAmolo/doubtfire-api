@@ -48,6 +48,9 @@
           >
             Sign In
           </button>
+          @if (showCredentials) {
+            <a uiSref="forgot_password" class="mt-2 text-sm text-blue-600">Forgot your password?</a>
+          }
         </form>
       </div>
     </div>

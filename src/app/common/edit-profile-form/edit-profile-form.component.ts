@@ -39,6 +39,9 @@ export class EditProfileFormComponent implements OnInit {
   public get customPronouns(): boolean {
     return this.formPronouns.pronouns === '__customPronouns';
   }
+  currentPassword: string = '';
+  newPassword: string = '';
+  passwordStrength: 'weak' | 'ok' | 'strong' | '' = '';
 
   ngOnInit(): void {
     if (this.data?.mode) {
@@ -53,6 +56,57 @@ export class EditProfileFormComponent implements OnInit {
     this.user.receiveFeedbackNotifications = true;
     this.user.receivePortfolioNotifications = true;
     this.user.receiveTaskNotifications = true;
+  }
+
+  public onChangePassword(): void {
+    if (!this.currentPassword || !this.newPassword) {
+      return;
+    }
+    if (!this.isStrongEnough(this.newPassword)) {
+      this._snackBar.open('Password is too weak. Use at least 8 chars with letters and numbers.', 'dismiss', { duration: 3000 });
+      return;
+    }
+    this.authService
+      .changePassword({ current_password: this.currentPassword, new_password: this.newPassword })
+      .subscribe({
+        next: () => {
+          this._snackBar.open('Password changed successfully.', 'dismiss', {
+            duration: 2000,
+            horizontalPosition: 'end',
+            verticalPosition: 'top',
+          });
+          this.currentPassword = '';
+          this.newPassword = '';
+        },
+        error: () => {
+          this._snackBar.open('Failed to change password. Please check your current password.', 'dismiss', {
+            duration: 3000,
+            horizontalPosition: 'end',
+            verticalPosition: 'top',
+          });
+        },
+      });
+  }
+
+  onNewPasswordInput(): void {
+    if (!this.newPassword) {
+      this.passwordStrength = '';
+      return;
+    }
+    this.passwordStrength = this.estimateStrength(this.newPassword);
+  }
+
+  private isStrongEnough(pw: string): boolean {
+    return pw.length >= 8 && /[A-Za-z]/.test(pw) && /\d/.test(pw);
+  }
+
+  private estimateStrength(pw: string): 'weak' | 'ok' | 'strong' {
+    const lengthScore = pw.length >= 12 ? 2 : pw.length >= 8 ? 1 : 0;
+    const variety = [/[a-z]/, /[A-Z]/, /\d/, /[^A-Za-z0-9]/].reduce((a, r) => (r.test(pw) ? a + 1 : a), 0);
+    const score = lengthScore + variety;
+    if (score >= 5) return 'strong';
+    if (score >= 3) return 'ok';
+    return 'weak';
   }
 
   public signOut(): void {
